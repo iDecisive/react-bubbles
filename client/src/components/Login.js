@@ -31,7 +31,7 @@ const Login = () => {
     event.preventDefault();
 
     axios
-    .post('http://localhost:3000/api/login', formInput)
+    .post('http://localhost:5000/api/login', formInput)
     .then(response => {
       
       localStorage.setItem('token', response.data.payload);
