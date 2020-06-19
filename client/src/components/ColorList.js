@@ -11,6 +11,66 @@ const ColorList = ({ colors, updateColors }) => {
   const [editing, setEditing] = useState(false);
   const [colorToEdit, setColorToEdit] = useState(initialColor);
 
+  const [newColor, setNewColor] = useState(initialColor);
+
+  //New color form
+
+  let newColorFormInput = event => {
+
+    switch(event.target.name) {
+
+      case 'color': 
+      
+        setNewColor({
+
+          ...newColor,
+          color: event.target.value
+
+        })
+
+      break;
+      
+      case 'hex':
+
+        setNewColor({
+
+          ...newColor,
+          code: { hex: event.target.value }
+
+        })
+
+      break;
+
+
+    }
+
+  }
+
+  let submitNewColor = event => {
+
+    event.preventDefault();
+
+    axiosWithAuth()
+    .post('http://localhost:5000/api/colors', newColor)
+    .then(response => {
+
+      console.log(response)
+
+      axiosWithAuth()
+      .get('http://localhost:5000/api/colors')
+      .then(response => {
+        updateColors(response.data);
+        console.log(response)
+      })
+      .catch(error => console.log(error));
+
+    })
+    .catch(error => console.log(error))
+
+  }
+
+  //Edit color form
+
   const editColor = color => {
     setEditing(true);
     setColorToEdit(color);
@@ -40,6 +100,8 @@ const ColorList = ({ colors, updateColors }) => {
     .catch(error => console.log(error))
 
   };
+
+  
 
   const deleteColor = color => {
     // make a delete request to delete this color
@@ -118,6 +180,24 @@ const ColorList = ({ colors, updateColors }) => {
       )}
       <div className="spacer" />
       {/* stretch - build another form here to add a color */}
+    
+      <form onSubmit={submitNewColor}>
+              Add a new color
+
+        <label>
+          Color name
+          <input type='text' name='color' onChange={newColorFormInput}/>
+        </label>
+
+        <label>
+          HEX Value
+          <input type='text' name='hex' onChange={newColorFormInput}/>
+        </label>
+
+              <button>Submit</button>
+
+      </form>
+    
     </div>
   );
 };
